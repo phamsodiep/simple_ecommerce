@@ -187,14 +187,16 @@ from PyQt5.QtSql import *
         self.metaData.setItemDelegateForColumn(2, TypeDelegate(self.metaData))
         self.metaData.setItemDelegateForColumn(3, DefinitionDelegate(self.metaData))
 
-    def xy(self, o):
-        my_dialog = QtWidgets.QDialog(MainWindow)
-        my_dialog.setModal(True)
-        my_dialog.exec_()
+    def showCropImageDialog(self, o):
+        self.cropImgDialog.openDialog()
         print(o)
 
     def setupUiEx(self, MainWindow):
-        self.dropBriefImg.clicked.connect(self.xy)
+        #@TODO: move initial to setupUiEx
+        #@TODO: pass two param to __init__: self and MainWindow
+        self.cropImgDialog = CropImgDialog(MainWindow, self)
+
+        self.dropBriefImg.clicked.connect(self.showCropImageDialog)
 
         self.tmpImgs = {"cur": 1}
         if os.path.exists("./tmp"):
@@ -374,6 +376,7 @@ from PyQt5.QtSql import *
                 print("*")
             fn = self.tmpImgs[imgUrl]
             print (fn)
+            self.targetProductImgFn = fn
             pixMap = QtGui.QPixmap(fn)
             pixMap = pixMap.scaled(225, 150, QtCore.Qt.KeepAspectRatio)
             self.img.setPixmap(pixMap)
@@ -577,6 +580,66 @@ class DefinitionDelegate(QtWidgets.QItemDelegate):
         self.text.setValidator(input_validator)
         return self.text
 
+
+class QGroupBox(QtWidgets.QGroupBox):
+    def __init__(self, parent):
+        QtWidgets.QDialog.__init__(self, parent)
+
+    def mousePressEvent(self, event):
+        self.__mousePressPos = None
+        self.__mouseMovePos = None
+        if event.button() == QtCore.Qt.LeftButton:
+            self.__mousePressPos = event.globalPos()
+            self.__mouseMovePos = event.globalPos()
+        super(QGroupBox, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            # adjust offset from clicked point to origin of widget
+            currPos = self.mapToGlobal(self.pos())
+            globalPos = event.globalPos()
+            diff = globalPos - self.__mouseMovePos
+            newPos = self.mapFromGlobal(currPos + diff)
+            self.move(newPos)
+            self.__mouseMovePos = globalPos
+        super(QGroupBox, self).mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self.__mousePressPos is not None:
+            moved = event.globalPos() - self.__mousePressPos 
+            if moved.manhattanLength() > 3:
+                event.ignore()
+                return
+        super(QGroupBox, self).mouseReleaseEvent(event)
+
+class CropImgDialog(QtWidgets.QDialog):
+    def __init__(self, parent, container):
+        QtWidgets.QDialog.__init__(self, parent)
+        self.resize(900, 600)
+        self.imgLabel = QtWidgets.QLabel(self)
+        self.imgLabel.setGeometry(QtCore.QRect(0, 0, 900, 600))
+        self.imgLabel.setText("")
+        self.imgLabel.setObjectName("imgLabel")
+        self.setModal(True)
+        self.container = container
+        # Init drop rectangle
+        self.groupBox = QGroupBox(self)
+        self.groupBox.setGeometry(QtCore.QRect(int(900/2) - int(225/2) - 1, int(600/2) - int(150/2) - 1, 225 + 2, 150 + 2))
+        self.groupBox.setAutoFillBackground(False)
+        self.groupBox.setStyleSheet("QGroupBox { border: 1px solid black;}")
+        self.groupBox.setTitle("")
+        self.groupBox.setFlat(False)
+        self.groupBox.setObjectName("groupBox")
+
+
+    def openDialog(self):
+        if (hasattr(self.container, "targetProductImgFn")):
+            pixMap = QtGui.QPixmap(self.container.targetProductImgFn)
+            pixMap = pixMap.scaled(900, 600, QtCore.Qt.KeepAspectRatio)
+            self.imgLabel.setPixmap(pixMap)
+        self.exec_()
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -586,13 +649,3 @@ if __name__ == "__main__":
     ui.setupUiEx(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
-
-
-
-    # def closeEvent(self, evnt):
-        # if self._want_to_close:
-            # super(MyDialog, self).closeEvent(evnt)
-        # else:
-            # evnt.ignore()
-            # self.setWindowState(QtCore.Qt.WindowMinimized)
