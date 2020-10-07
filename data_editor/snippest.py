@@ -188,8 +188,15 @@ from PyQt5.QtSql import *
         self.metaData.setItemDelegateForColumn(3, DefinitionDelegate(self.metaData))
 
     def showCropImageDialog(self, o):
-        self.cropImgDialog.openDialog()
-        print(o)
+        if self.targetProduct != None:
+            index = self.targetProduct.siblingAtColumn(8)
+            model = self.productsModel
+            scale = model.data(index)
+            div = 1
+            for i in range(0, scale):
+                div /= 2.0
+            self.cropImgDialog.openDialog(int(1800 * div), int(1200 * div))
+            print(o)
 
     def setupUiEx(self, MainWindow):
         #@TODO: move initial to setupUiEx
@@ -580,64 +587,83 @@ class DefinitionDelegate(QtWidgets.QItemDelegate):
         self.text.setValidator(input_validator)
         return self.text
 
-
-class QGroupBox(QtWidgets.QGroupBox):
+class CropImgRegion(QtWidgets.QGroupBox):
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
 
+    def enableDragDrop(self):
+        self.allowDragDrop = True
+
+    def disableDragDrop(self):
+        self.allowDragDrop = False
+
     def mousePressEvent(self, event):
-        self.__mousePressPos = None
-        self.__mouseMovePos = None
-        if event.button() == QtCore.Qt.LeftButton:
-            self.__mousePressPos = event.globalPos()
-            self.__mouseMovePos = event.globalPos()
-        super(QGroupBox, self).mousePressEvent(event)
+        if self.allowDragDrop:
+            self.__mousePressPos = None
+            self.__mouseMovePos = None
+            if event.button() == QtCore.Qt.LeftButton:
+                self.__mousePressPos = event.globalPos()
+                self.__mouseMovePos = event.globalPos()
+        super(CropImgRegion, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == QtCore.Qt.LeftButton:
-            # adjust offset from clicked point to origin of widget
-            currPos = self.mapToGlobal(self.pos())
-            globalPos = event.globalPos()
-            diff = globalPos - self.__mouseMovePos
-            newPos = self.mapFromGlobal(currPos + diff)
-            self.move(newPos)
-            self.__mouseMovePos = globalPos
-        super(QGroupBox, self).mouseMoveEvent(event)
+        if self.allowDragDrop:
+            if event.buttons() == QtCore.Qt.LeftButton:
+                # adjust offset from clicked point to origin of widget
+                currPos = self.mapToGlobal(self.pos())
+                globalPos = event.globalPos()
+                diff = globalPos - self.__mouseMovePos
+                newPos = self.mapFromGlobal(currPos + diff)
+                self.move(newPos)
+                self.__mouseMovePos = globalPos
+        super(CropImgRegion, self).mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        if self.__mousePressPos is not None:
-            moved = event.globalPos() - self.__mousePressPos 
-            if moved.manhattanLength() > 3:
-                event.ignore()
-                return
-        super(QGroupBox, self).mouseReleaseEvent(event)
+        if self.allowDragDrop:
+            if self.__mousePressPos is not None:
+                moved = event.globalPos() - self.__mousePressPos 
+                if moved.manhattanLength() > 3:
+                    event.ignore()
+                    return
+        super(CropImgRegion, self).mouseReleaseEvent(event)
 
 class CropImgDialog(QtWidgets.QDialog):
     def __init__(self, parent, container):
         QtWidgets.QDialog.__init__(self, parent)
-        self.resize(900, 600)
+        ##self.resize(900, 600)
         self.imgLabel = QtWidgets.QLabel(self)
-        self.imgLabel.setGeometry(QtCore.QRect(0, 0, 900, 600))
+        ##self.imgLabel.setGeometry(QtCore.QRect(0, 0, 900, 600))
         self.imgLabel.setText("")
         self.imgLabel.setObjectName("imgLabel")
         self.setModal(True)
         self.container = container
         # Init drop rectangle
-        self.groupBox = QGroupBox(self)
-        self.groupBox.setGeometry(QtCore.QRect(int(900/2) - int(225/2) - 1, int(600/2) - int(150/2) - 1, 225 + 2, 150 + 2))
+        self.groupBox = CropImgRegion(self)
+        ##self.groupBox.setGeometry(QtCore.QRect(int(900/2) - int(225/2) - 1, int(600/2) - int(150/2) - 1, 225 + 2, 150 + 2))
         self.groupBox.setAutoFillBackground(False)
         self.groupBox.setStyleSheet("QGroupBox { border: 1px solid black;}")
         self.groupBox.setTitle("")
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
 
-
-    def openDialog(self):
+    def openDialog(self, width, height):
+        if width <= 225 or height <= 150:
+            self.groupBox.disableDragDrop()
+        else:
+            self.groupBox.enableDragDrop()
+        dropW = int(225 / 2)
+        dropH = int(150 / 2)
+        width = int(width / 2)
+        height = int(height / 2)
         if (hasattr(self.container, "targetProductImgFn")):
             pixMap = QtGui.QPixmap(self.container.targetProductImgFn)
-            pixMap = pixMap.scaled(900, 600, QtCore.Qt.KeepAspectRatio)
+            pixMap = pixMap.scaled(width, height, QtCore.Qt.KeepAspectRatio)
             self.imgLabel.setPixmap(pixMap)
+        self.resize(width, height)
+        self.imgLabel.setGeometry(QtCore.QRect(0, 0, width, height))
+        self.groupBox.setGeometry(QtCore.QRect(int(width/2) - int(dropW/2) - 1, int(height/2) - int(dropH/2) - 1, dropW + 2, dropH + 2))
         self.exec_()
+
 
 
 if __name__ == "__main__":
