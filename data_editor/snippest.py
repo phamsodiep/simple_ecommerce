@@ -195,7 +195,19 @@ from PyQt5.QtSql import *
             div = 1
             for i in range(0, scale):
                 div /= 2.0
-            self.cropImgDialog.openDialog(int(1800 * div), int(1200 * div))
+
+            try:
+                cropXidx = self.targetProduct.siblingAtColumn(9)
+                posX = self.productData.model().data(cropXidx)
+                cropYidx = self.targetProduct.siblingAtColumn(10)
+                posY = self.productData.model().data(cropYidx)
+                posX = int(posX / 2)
+                posY = int(posY / 2)
+            except:
+                posX = 0
+                posY = 0
+
+            self.cropImgDialog.openDialog(int(1800 * div), int(1200 * div), posX, posY)
             print(o)
 
     def setupUiEx(self, MainWindow):
@@ -417,7 +429,12 @@ from PyQt5.QtSql import *
                         index = self.curMetaDataRow.siblingAtColumn(3)
                         self.metaData.model().setData(index, str(cat), QtCore.Qt.EditRole)
 
-
+    def onCropFinished(self, position):
+        if position != None:
+            cropXidx = self.targetProduct.siblingAtColumn(9)
+            cropYidx = self.targetProduct.siblingAtColumn(10)
+            self.productData.model().setData(cropXidx, position.x() * 2, QtCore.Qt.EditRole)
+            self.productData.model().setData(cropYidx, position.y() * 2, QtCore.Qt.EditRole)
 
 class CharacteristicOfCategoryProxyModel(QtCore.QSortFilterProxyModel):
     def setFilter(self, char, cat):
@@ -589,6 +606,7 @@ class DefinitionDelegate(QtWidgets.QItemDelegate):
 
 class CropImgRegion(QtWidgets.QGroupBox):
     def __init__(self, parent):
+        self.dropAt = None
         QtWidgets.QDialog.__init__(self, parent)
 
     def enableDragDrop(self):
@@ -614,6 +632,7 @@ class CropImgRegion(QtWidgets.QGroupBox):
                 globalPos = event.globalPos()
                 diff = globalPos - self.__mouseMovePos
                 newPos = self.mapFromGlobal(currPos + diff)
+                self.dropAt = newPos
                 self.move(newPos)
                 self.__mouseMovePos = globalPos
         super(CropImgRegion, self).mouseMoveEvent(event)
@@ -646,7 +665,7 @@ class CropImgDialog(QtWidgets.QDialog):
         self.groupBox.setFlat(False)
         self.groupBox.setObjectName("groupBox")
 
-    def openDialog(self, width, height):
+    def openDialog(self, width, height, posX, posY):
         if width <= 225 or height <= 150:
             self.groupBox.disableDragDrop()
         else:
@@ -661,8 +680,13 @@ class CropImgDialog(QtWidgets.QDialog):
             self.imgLabel.setPixmap(pixMap)
         self.resize(width, height)
         self.imgLabel.setGeometry(QtCore.QRect(0, 0, width, height))
-        self.groupBox.setGeometry(QtCore.QRect(int(width/2) - int(dropW/2) - 1, int(height/2) - int(dropH/2) - 1, dropW + 2, dropH + 2))
+
+        self.groupBox.setGeometry(QtCore.QRect(posX, posY, dropW + 2, dropH + 2))
+        #self.groupBox.setGeometry(QtCore.QRect(int(width/2) - int(dropW/2) - 1, int(height/2) - int(dropH/2) - 1, dropW + 2, dropH + 2))
         self.exec_()
+
+    def closeEvent(self, event):
+        self.container.onCropFinished(self.groupBox.dropAt)
 
 
 
