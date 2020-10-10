@@ -211,6 +211,9 @@ from PyQt5.QtSql import *
             print(o)
 
     def setupUiEx(self, MainWindow):
+        # Set up on description change
+        self.description.textChanged.connect(self.onDescriptionTextChanged)
+
         #@TODO: move initial to setupUiEx
         #@TODO: pass two param to __init__: self and MainWindow
         self.cropImgDialog = CropImgDialog(MainWindow, self)
@@ -408,6 +411,15 @@ from PyQt5.QtSql import *
         briefImgScale = briefImgScale if isinstance(briefImgScale, int) else 0
         self.activeImgLov[activeImg].setChecked(True)
         self.briefImgScaleLov[briefImgScale].setChecked(True)
+        # show description
+        htmlDescription = self.productsModel.data(cur.siblingAtColumn(11))
+        self.description.setHtml(htmlDescription)
+
+    def onDescriptionTextChanged(self):
+        if self.targetProduct != None:
+            idx = self.targetProduct.siblingAtColumn(11)
+            data = self.description.toHtml()
+            self.productsModel.setData(idx, data, QtCore.Qt.EditRole)
 
     def changeProductData(self, cur, pre):
         indexes = cur.indexes()
