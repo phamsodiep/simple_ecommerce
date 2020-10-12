@@ -46,5 +46,17 @@ cursor.execute("""
     )
 """)
 
+cursor.execute("""
+    CREATE TABLE prod_char
+    (
+        proId INTEGER,
+        charId INTEGER,
+        value TEXT,
+        PRIMARY KEY (proId, charId),
+        FOREIGN KEY (proId) REFERENCES products(id),
+        FOREIGN KEY (charId) REFERENCES characteristics(id)
+    )
+""")
+
 connection.commit()
 
