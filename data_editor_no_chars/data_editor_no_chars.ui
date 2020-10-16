@@ -388,22 +388,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionMetaData</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>switchCharacteristicsView()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>672</x>
-     <y>343</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionData</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>

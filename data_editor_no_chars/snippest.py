@@ -138,53 +138,6 @@ from PyQt5.QtSql import *
 
         self.productData.defaultValues = {1: cat}
 
-    def switchMetaDataViewCat(self, cat):
-        self.changeState(2)
-        if not(hasattr(self, "catCharModels")):
-            self.catCharModels = {}
-
-        if not(cat in self.catCharModels):
-            self.catCharModels[cat] = SqlQueryModel(None, self.db)
-
-            catCharModel = self.catCharModels[cat]
-            queryStr = "".join([
-                "SELECT id, name, type, definition, ",
-                    "(CASE WHEN charId IS NULL THEN '' ELSE '✔' END) as Mine ",
-                "FROM characteristics LEFT JOIN cat_char ",
-                    "ON characteristics.id = cat_char.charId ",
-                        "AND cat_char.catId = " + str(cat)
-            ])
-            query = QSqlQuery(queryStr)
-            catCharModel.setQuery(query)
-            catCharModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
-        self.metaData.setModel(self.catCharModels[cat])
-        self.metaData.setColumnWidth(1, 130)
-        for i in range(0, 4):
-            self.metaData.setItemDelegateForColumn(i, ReadOnlyDelegate(self.metaData))
-        self.metaData.setItemDelegateForColumn(4, CatHasCharDelegate(self.metaData))
-
-    def switchCharacteristicsView(self):
-        self.categories.selectionModel().clearSelection()
-        self.changeState(2)
-        if not(hasattr(self, "charModel")):
-            self.charModel = SqlQueryModel(None, self.db)
-            self.charModel.setTable("characteristics")
-            self.charModel.select()
-            self.charModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
-            self.charModel.setHeaderData(0, QtCore.Qt.Horizontal, "Mã số")
-            self.charModel.setHeaderData(1, QtCore.Qt.Horizontal, "Tên")
-            self.charModel.setHeaderData(2, QtCore.Qt.Horizontal, "Phân loại")
-            self.charModel.setHeaderData(3, QtCore.Qt.Horizontal, "Định nghĩa")
-        if self.charModel.rowCount() == 0:
-            self.charModel.insertRows(self.charModel.rowCount(), 1)
-        self.metaData.setModel(self.charModel)
-        self.metaData.setColumnWidth(1, 130)
-        self.metaData.selectionModel().selectionChanged.connect(self.changeMetaData)
-        self.metaData.setItemDelegateForColumn(0, ReadOnlyDelegate(self.metaData))
-        self.metaData.setItemDelegateForColumn(1, None) # Fix bug could not edit after switching from a cat
-        self.metaData.setItemDelegateForColumn(2, TypeDelegate(self.metaData))
-        self.metaData.setItemDelegateForColumn(3, DefinitionDelegate(self.metaData))
-
     def showCropImageDialog(self, o):
         if self.targetProduct != None:
             index = self.targetProduct.siblingAtColumn(8)
@@ -231,10 +184,6 @@ from PyQt5.QtSql import *
         catFolder =  os.getcwd() + '/cat'
         if not os.path.exists(catFolder):
             print("Không thấy thư mục 'cat'.")
-            exit(0)
-        lovFolder =  os.getcwd() + '/lov'
-        if not os.path.exists(lovFolder):
-            print("Không thấy thư mục 'lov'.")
             exit(0)
 
         # Decorate MainWindow
@@ -299,45 +248,6 @@ from PyQt5.QtSql import *
                 pass
 
     def saveAll(self):
-        if (hasattr(self, "catCharModels")):
-            catCharModel = SqlQueryModel(None, self.db)
-            catCharModel.setTable("cat_char")
-            catCharModel.select()
-            catCharModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
-            catCharViewModel = CharacteristicOfCategoryProxyModel()
-            catCharViewModel.setSourceModel(catCharModel)
-            toInsert = []
-            for cat in self.catCharModels:
-                model = self.catCharModels[cat]
-                for i in range(0, model.rowCount()):
-                    if model.data(model.index(i, 4), QtCore.Qt.DisplayRole) == '✔':
-                        char = model.data(model.index(i, 0), QtCore.Qt.DisplayRole)
-                        catCharViewModel.setFilter(char, cat)
-                        if catCharViewModel.rowCount() == 0:
-                            toInsert.append([cat, char])
-                            #print("Need to insert cat " + str(cat) + " char " + str(char))
-
-            catCharViewModel.setSourceModel(None);
-            beginIdx = catCharModel.rowCount()
-            totalRow = len(toInsert)
-            catCharModel.insertRows(beginIdx, totalRow)
-            for i in range(0, totalRow):
-                catIdx = catCharModel.index(beginIdx + i, 0)
-                charIdx = catCharModel.index(beginIdx + i, 1)
-                catCharModel.setData(catIdx, toInsert[i][0], QtCore.Qt.EditRole)
-                catCharModel.setData(charIdx, toInsert[i][1], QtCore.Qt.EditRole)
-            if catCharModel.submitAll():
-                print("catCharModel.submitAll(): SUCCESS")
-            else:
-                print("catCharModel.submitAll(): FAILURE")
-
-        if hasattr(self, "charModel"):
-            if self.charModel.submitAll():
-                print("self.charModel.submitAll(): SUCCESS")
-            else:
-                print("self.charModel.submitAll(): FAILURE")
-            delattr(self, "charModel")
-            self.catCharModels = {}
         if hasattr(self, "productsModel"):
             if self.productsModel.sourceModel().submitAll():
                 print("self.productsModel.sourceModel().submitAll(): SUCCESS")
@@ -356,7 +266,8 @@ from PyQt5.QtSql import *
                 if self.state == 1:
                     self.switchDataViewCat(cat)
                 elif self.state == 2:
-                    self.switchMetaDataViewCat(cat)
+                    #self.switchMetaDataViewCat(cat)
+                    pass
 
     def changeMetaData(self, cur, pre):
         indexes = cur.indexes()
@@ -441,18 +352,6 @@ from PyQt5.QtSql import *
             self.productData.model().setData(cropXidx, position.x() * 2, QtCore.Qt.EditRole)
             self.productData.model().setData(cropYidx, position.y() * 2, QtCore.Qt.EditRole)
 
-class CharacteristicOfCategoryProxyModel(QtCore.QSortFilterProxyModel):
-    def setFilter(self, char, cat):
-        self.char = char
-        self.cat = cat
-        self.invalidateFilter()
-
-    def filterAcceptsRow(self, srcRow, srcParent):
-        model = self.sourceModel()
-        catIdx = model.index(srcRow, 0, srcParent)
-        charIdx = model.index(srcRow, 1, srcParent)
-        return model.data(catIdx, QtCore.Qt.DisplayRole) == self.cat and model.data(charIdx, QtCore.Qt.DisplayRole) == self.char
-
 class ProductDataTableView(QtWidgets.QTableView):
     defaultValues = {}
     def keyPressEvent(self, event):
@@ -482,31 +381,6 @@ class ProductDataTableView(QtWidgets.QTableView):
                 self.setCurrentIndex(index.siblingAtRow(rowId + 1).siblingAtColumn(3))
         super(ProductDataTableView, self).keyPressEvent(event)
 
-class ProductDataTableView2(QtWidgets.QTableView):
-    defaultValues = {}
-    def keyPressEvent(self, event):
-        if event.key() == 16777220:
-            colCount = self.model().columnCount()
-            rowCount = self.model().rowCount()
-            index = self.currentIndex()
-            rowId = index.row()
-            colId = index.column()
-            if colId + 1 < colCount:
-                self.setCurrentIndex(index.siblingAtColumn(colId + 1))
-            else:
-                rowId += 1
-                while self.isRowHidden(rowId) and (rowId < rowCount):
-                    rowId += 1
-                if rowId == rowCount:
-                    self.model().insertRows(rowCount, 1)
-                    for key in self.defaultValues:
-                        index = index.siblingAtRow(rowId).siblingAtColumn(key)
-                        data = self.defaultValues[key]
-                        self.model().setData(index, data, QtCore.Qt.EditRole)
-                        print("\tAssign " + str(key) + " with " + str(data))
-                self.setCurrentIndex(index.siblingAtRow(rowId).siblingAtColumn(0))
-        super(ProductDataTableView, self).keyPressEvent(event)
-
 class SqlQueryModel(QSqlTableModel):
     comboItems=["", "Có/Không", "Khoảng", "Tham khảo", "Danh mục", "Chữ", "Chiều"]
     def flags(self, index):
@@ -521,21 +395,6 @@ class SqlQueryModel(QSqlTableModel):
             if idx in range(0, len(self.comboItems)):
                 return self.comboItems[idx]
         return idx
-
-class CatHasCharDelegate(QtWidgets.QItemDelegate):
-    def __init__(self, parent):
-        self.model = parent.model()
-        QtWidgets.QItemDelegate.__init__(self, parent)
-
-    def createEditor(self, parent, option, index):
-        charId = self.model.data(index, QtCore.Qt.DisplayRole)
-        self.chkBox = QtWidgets.QCheckBox(parent)
-        self.chkBox.setCheckState(charId == "✔")
-        self.chkBox.setStyleSheet("QCheckBox::indicator {width:22px;}")
-        return self.chkBox
-
-    def setModelData(self, combo, model, index):
-        model.setData(index, "✔" if self.chkBox.checkState() else "", QtCore.Qt.EditRole)
 
 class TypeDelegate(QtWidgets.QItemDelegate):
     # @TODO fix bug: switch combo box type, regular expression of description

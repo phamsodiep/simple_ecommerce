@@ -9,26 +9,6 @@ connection = sqlite3.connect(DB_FILE_NAME)
 cursor = connection.cursor()
 
 cursor.execute("""
-    CREATE TABLE characteristics
-    (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        type INTEGER,
-        definition TEXT
-    )
-""")
-
-cursor.execute("""
-    CREATE TABLE cat_char
-    (
-        catId INTEGER,
-        charId INTEGER,
-        PRIMARY KEY (catId, charId),
-        FOREIGN KEY (charId) REFERENCES characteristics(id)
-    )
-""")
-
-cursor.execute("""
     CREATE TABLE products
     (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,18 +23,6 @@ cursor.execute("""
         briefImgCroppedX INTEGER,
         briefImgCroppedY INTEGER,
         desc TEXT
-    )
-""")
-
-cursor.execute("""
-    CREATE TABLE prod_char
-    (
-        proId INTEGER,
-        charId INTEGER,
-        value TEXT,
-        PRIMARY KEY (proId, charId),
-        FOREIGN KEY (proId) REFERENCES products(id),
-        FOREIGN KEY (charId) REFERENCES characteristics(id)
     )
 """)
 
