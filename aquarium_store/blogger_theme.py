@@ -7,16 +7,13 @@ html = f.read()
 f.close()
 
 
-BEGIN_TEMPLATE = """
-<?xml version="1.0" encoding="UTF-8" ?>
+BEGIN_TEMPLATE = """<?xml version="1.0" encoding="UTF-8" ?>
 <html b:css='false' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
     <head>
         <b:skin version='1.3.0'><![CDATA[]]></b:skin>
     </head>
     <body>
-          <div id="aquarium_store"></div>
-      <h1>Website is under construction</h1>
-      <p>&#169; cakiengphongthuy.blogspot.com</p>
+        <div id="aquarium_store"></div>
         <b:section id='page_body'/>
 """
 
