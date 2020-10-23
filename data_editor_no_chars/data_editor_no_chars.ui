@@ -279,7 +279,7 @@
        <rect>
         <x>280</x>
         <y>129</y>
-        <width>191</width>
+        <width>102</width>
         <height>31</height>
        </rect>
       </property>
@@ -301,6 +301,19 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="copyDescription">
+      <property name="geometry">
+       <rect>
+        <x>389</x>
+        <y>129</y>
+        <width>82</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Chép HTML</string>
       </property>
      </widget>
     </widget>

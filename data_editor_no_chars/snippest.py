@@ -161,7 +161,14 @@ from PyQt5.QtSql import *
             self.cropImgDialog.openDialog(int(1800 * div), int(1200 * div), posX, posY)
             print(o)
 
+    def copyDescriptionAction(self, o):
+        self.tkClipboard.withdraw()
+        htmlCode = self.tkClipboard.clipboard_get()
+        self.description.setHtml(htmlCode)
+
     def setupUiEx(self, MainWindow):
+        import tkinter as tk
+        self.tkClipboard = tk.Tk()
         # Set up on description change
         self.description.textChanged.connect(self.onDescriptionTextChanged)
 
@@ -170,6 +177,7 @@ from PyQt5.QtSql import *
         self.cropImgDialog = CropImgDialog(MainWindow, self)
 
         self.dropBriefImg.clicked.connect(self.showCropImageDialog)
+        self.copyDescription.clicked.connect(self.copyDescriptionAction)
 
         self.tmpImgs = {"cur": 1}
         if os.path.exists("./tmp"):
