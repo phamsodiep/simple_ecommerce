@@ -161,30 +161,11 @@ from PyQt5.QtSql import *
             self.cropImgDialog.openDialog(int(1800 * div), int(1200 * div), posX, posY)
             print(o)
 
-    def pasteDescriptionAction(self, o):
-        self.tkClipboard.withdraw()
-        htmlCode = self.tkClipboard.clipboard_get()
-        self.description.setHtml(htmlCode)
-
-    def copyDescriptionAction(self, o):
-        self.tkClipboard.withdraw()
-        self.tkClipboard.clipboard_clear()
-        htmlCode = self.description.toHtml()
-        idx = htmlCode.find("<body")
-        if idx >= 0:
-            idx = htmlCode.find(">", idx)
-            if idx > 0:
-                startIdx = idx + 1
-                idx = htmlCode.find("</body>", idx)
-                if idx > 0:
-                    endIdx = idx
-                    htmlCode = htmlCode[startIdx:endIdx]
-        self.tkClipboard.clipboard_append(htmlCode)
-
     def setupUiEx(self, MainWindow):
         import tkinter as tk
         self.tkClipboard = tk.Tk()
         # Set up on description change
+        self.description.setAcceptRichText(False)
         self.description.textChanged.connect(self.onDescriptionTextChanged)
 
         #@TODO: move initial to setupUiEx
@@ -192,8 +173,6 @@ from PyQt5.QtSql import *
         self.cropImgDialog = CropImgDialog(MainWindow, self)
 
         self.dropBriefImg.clicked.connect(self.showCropImageDialog)
-        self.pasteDescription.clicked.connect(self.pasteDescriptionAction)
-        self.copyDescription.clicked.connect(self.copyDescriptionAction)
 
         self.tmpImgs = {"cur": 1}
         if os.path.exists("./tmp"):
@@ -341,12 +320,12 @@ from PyQt5.QtSql import *
         self.briefImgScaleLov[briefImgScale].setChecked(True)
         # show description
         htmlDescription = self.productsModel.data(cur.siblingAtColumn(11))
-        self.description.setHtml(htmlDescription)
+        self.description.setPlainText(htmlDescription)
 
     def onDescriptionTextChanged(self):
         if self.targetProduct != None:
             idx = self.targetProduct.siblingAtColumn(11)
-            data = self.description.toHtml()
+            data = self.description.toPlainText()
             self.productsModel.setData(idx, data, QtCore.Qt.EditRole)
 
     def changeProductData(self, cur, pre):
