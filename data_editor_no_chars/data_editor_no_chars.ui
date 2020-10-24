@@ -125,9 +125,9 @@
       <property name="geometry">
        <rect>
         <x>5</x>
-        <y>190</y>
+        <y>230</y>
         <width>483</width>
-        <height>451</height>
+        <height>411</height>
        </rect>
       </property>
       <property name="font">
@@ -140,7 +140,7 @@
       <property name="geometry">
        <rect>
         <x>14</x>
-        <y>170</y>
+        <y>200</y>
         <width>51</width>
         <height>16</height>
        </rect>
@@ -279,7 +279,7 @@
        <rect>
         <x>280</x>
         <y>129</y>
-        <width>102</width>
+        <width>111</width>
         <height>31</height>
        </rect>
       </property>
@@ -303,11 +303,24 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+     <widget class="QPushButton" name="pasteDescription">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>190</y>
+        <width>82</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dán HTML</string>
+      </property>
+     </widget>
      <widget class="QPushButton" name="copyDescription">
       <property name="geometry">
        <rect>
-        <x>389</x>
-        <y>129</y>
+        <x>70</x>
+        <y>190</y>
         <width>82</width>
         <height>31</height>
        </rect>
