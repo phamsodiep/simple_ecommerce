@@ -10,6 +10,10 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 const catsTree = {
   "root": [
     {
+      "id": 0,
+      "name": "Sản phẩm"
+    },
+    {
       "id": 1,
       "name": "Cá",
       "hasProducts": true,
@@ -81,6 +85,35 @@ const catsTree = {
           ]
         }
       ]
+    },
+
+    {
+      "id": 0,
+      "name": "Bài viết"
+    },
+    {
+      "id": 100,
+      "name": "Hướng dẫn setup",
+      "children": [
+      ]
+    },
+    {
+      "id": 200,
+      "name": "Mẹo",
+      "children": [
+        {
+          "id": 201,
+          "name": "Mẹo chăm sóc",
+          "children": [
+          ]
+        },
+        {
+          "id": 202,
+          "name": "Mẹo phong thủy",
+          "children": [
+          ]
+        }
+      ]
     }
   ]
 };
@@ -93,6 +126,10 @@ function CategoryMenu(props) {
     function(id) {
       //alert(id);
     };
+
+  const headingStyle = {
+    background: "#F3F3F3"
+  }
 
   const groupStyle = {
     background: "#D0D0D0"
@@ -121,7 +158,20 @@ function CategoryMenu(props) {
   let n = props.cat.root.length;
   for(let i = 0; i < n; i++) {
     let menuItem = props.cat.root[i];
+    /* Menu group name heading */
+    if (menuItem.id === 0) {
+      items[items.length] = (
+          <React.Fragment>
+              <ListItem style={headingStyle}>
+                  <ListItemText primary={menuItem.name} />
+              </ListItem>
+              <Divider />
+          </React.Fragment>
+      );
+      continue;
+    }
     let m = menuItem.children.length;
+    /* Menu item with sub menu item */
     if (m > 0) {
       let subItems = []
       for (let j = 0; j < m; j++) {
@@ -147,6 +197,7 @@ function CategoryMenu(props) {
           </React.Fragment>
       );
     }
+    /* Menu item without sub menu item */
     else {
       items[items.length] = (
           <React.Fragment>
