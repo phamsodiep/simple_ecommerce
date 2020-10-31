@@ -13,6 +13,13 @@ BEGIN_TEMPLATE = """<?xml version="1.0" encoding="UTF-8" ?>
         <b:skin version='1.3.0'><![CDATA[]]></b:skin>
     </head>
     <body>
+        <style>
+            * {
+              margin: 0px;
+              padding: 0px;
+              border: none;
+            }
+        </style>
         <div id="aquarium_store"></div>
         <b:section id='page_body'/>
 """
