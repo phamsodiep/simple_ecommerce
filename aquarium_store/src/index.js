@@ -14,6 +14,14 @@ import { createStore, applyMiddleware } from 'redux';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
 
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  //Link,
+  withRouter
+} from 'react-router-dom';
+
 import { IS_LOCALHOST, PRODUCT_CATEGORIES} from './common/conf_debug.js';
 
 
@@ -253,13 +261,27 @@ const stateToPropsAppMap = (state) => {
    };
 };
 
+const AboutMe = function(props) {
+  return <h2>Trang web đang được xây dựng.</h2>;
+}
+
+const Products = function(props) {
+  return <h2>San pham</h2>;
+}
+
+const Articles = function(props) {
+  return <h2>Bai Viet</h2>;
+}
+
+const CategoryMenuWithRouter = withRouter(CategoryMenu);
+
 const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
   function (props) {
     if (!props.isInit && typeof props.loadCategory === "function") {
       props.loadCategory();
     }
     return (
-      <React.Fragment>
+      <Router>
           <div style={headerContent}><header>
               <h1><center>Cá Kiểng Phong Thủy</center></h1>
               <nav>
@@ -268,11 +290,15 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
 
           <div style={flexContainer}>
               <div style={sidebarMenu}><aside>
-                  <CategoryMenu cat={props.menuCategories} onNavigate={onNavigating}/>
+                  <CategoryMenuWithRouter cat={props.menuCategories} onNavigate={onNavigating}/>
               </aside></div>
               <div style={mainContent}>
                   <main>
-                      <h2>Trang web đang được xây dựng.</h2>
+                    <Switch>
+                        <Route path="/art" component={Articles} />
+                        <Route path="/cat" component={Products} />
+                        <Route path="/" component={AboutMe} />
+                    </Switch>
                   </main>
               </div>
           </div>
@@ -291,7 +317,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
                   <p>&nbsp;</p>
               </footer>
           </div>
-      </React.Fragment>
+      </Router>
     );
   }
 );
