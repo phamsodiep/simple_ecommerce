@@ -9,119 +9,13 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import { Provider, connect } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 
+import axios from 'axios';
+import axiosMiddleware from 'redux-axios-middleware';
 
-const catsTree = {
-  "root": [
-    {
-      "id": 0,
-      "name": "Sản phẩm"
-    },
-    {
-      "id": 1,
-      "name": "Cá",
-      "hasProducts": true,
-      "children": [
-        {
-          "id": 11,
-          "name": "Cá chép",
-          "children": [
-          ]
-        },
-        {
-          "id": 12,
-          "name": "Cá dĩa",
-          "children": [
-          ]
-        },
-        {
-          "id": 13,
-          "name": "Cá rồng",
-          "children": [
-          ]
-        },
-      ]
-    },
-    {
-      "id": 2,
-      "name": "Cây thủy sinh",
-      "children": [
-      ]
-    },
-    {
-      "id": 3,
-      "name": "Động vật khác",
-      "children": [
-      ]
-    },
-    {
-      "id": 4,
-      "name": "Thức ăn",
-      "children": [
-      ]
-    },
-    {
-      "id": 5,
-      "name": "Hồ - đèn - bơm - lọc",
-      "children": [
-      ]
-    },
-    {
-      "id": 6,
-      "name": "Dụng cụ",
-      "children": [
-      ]
-    },
-    {
-      "id": 7,
-      "name": "Linh tinh",
-      "children": [
-        {
-          "id": 71,
-          "name": "Trang trí",
-          "children": [
-          ]
-        },
-        {
-          "id": 72,
-          "name": "Thuốc và hóa chất",
-          "children": [
-          ]
-        }
-      ]
-    },
+import { IS_LOCALHOST, PRODUCT_CATEGORIES} from './common/conf_debug.js';
 
-    {
-      "id": 0,
-      "name": "Bài viết"
-    },
-    {
-      "id": 100,
-      "name": "Hướng dẫn setup",
-      "children": [
-      ]
-    },
-    {
-      "id": 200,
-      "name": "Mẹo",
-      "children": [
-        {
-          "id": 201,
-          "name": "Mẹo chăm sóc",
-          "children": [
-          ]
-        },
-        {
-          "id": 202,
-          "name": "Mẹo phong thủy",
-          "children": [
-          ]
-        }
-      ]
-    }
-  ]
-};
 
 
 function CategoryMenu(props) {
@@ -159,10 +53,10 @@ function CategoryMenu(props) {
   }
 
   let items = [];
-
-  let n = props.cat.root.length;
+  let cats = props.cat === undefined ? [] : props.cat;
+  let n = cats.length;
   for(let i = 0; i < n; i++) {
-    let menuItem = props.cat.root[i];
+    let menuItem = cats[i];
     /* Menu group name heading */
     if (menuItem.id === 0) {
       items[items.length] = (
@@ -222,6 +116,7 @@ function CategoryMenu(props) {
 }
 
 const onNavigating = (id) => {
+  // navigatable: 10 < x < 100 || x > 1000 || x in [no child list]
   //alert('id = ' + id);
 }
 
@@ -243,19 +138,126 @@ const mainContent = {
 }
 
 const headerContent = {
-  height: "120px"
+  height: "120px",
+  padding: "1rem 0rem 0rem 0rem"
 }
 
-const dispatchToPropsAppMap = dispatch => {
-  return {
-    loadCategory: () => {
-        dispatch({})
+
+const reducer = IS_LOCALHOST ?
+  (state = 0, action) => {
+    switch (action.type) {
+      case "LOAD_CATS_FAIL":
+        alert(JSON.stringify(action));
+        return Object.assign(
+          {},
+          state,
+          {
+          }
+        );
+
+      case "LOAD_CATS_SUCCESS":
+        //alert(JSON.stringify(action.payload.data));
+        return Object.assign(
+          {},
+          state,
+          {
+            isInit: true,
+            menuCategories: PRODUCT_CATEGORIES
+          }
+        );
+      default:
+        return state;
     }
-  }
-}
+  } :
+  (state = 0, action) => {
+    switch (action.type) {
+      case "LOAD_CATS_FAIL":
+        alert(JSON.stringify(action));
+        return Object.assign(
+          {},
+          state,
+          {
+          }
+        );
 
-const App = connect(null, dispatchToPropsAppMap)(
+      case "LOAD_CATS_SUCCESS":
+        //alert(JSON.stringify(action.payload.data));
+        //alert(JSON.parse(action.payload.data.content));
+        return Object.assign(
+          {},
+          state,
+          {
+            isInit: true,
+            menuCategories: JSON.parse(action.payload.data.content)
+          }
+        );
+      default:
+        return state;
+    }
+  };
+
+const client = IS_LOCALHOST ?
+  axios.create({
+    baseURL: "http://localhost:3000/",
+    responseType: 'text'
+  }) : 
+  axios.create({
+    baseURL: "https://www.googleapis.com/blogger/v3/blogs/",
+    responseType: 'json'
+  });
+
+const dispatchToPropsAppMap = IS_LOCALHOST ?
+  dispatch => {
+    return {
+      loadCategory: () => {
+          dispatch(
+            {
+              type: "LOAD_CATS",
+              payload: {
+                request: {
+                  method: "GET",
+                  url: "/8396047075318857173/posts",
+                  data: {
+                  }
+                }
+              } 
+            }
+          )
+      }
+    }
+  } : 
+  dispatch => {
+    return {
+      loadCategory: () => {
+          dispatch(
+            {
+              type: "LOAD_CATS",
+              payload: {
+                request: {
+                  method: "GET",
+                  url: "/8396047075318857173/posts/1041595060409029414/?key=AIzaSyDskPUFJo9WZqlU2wR09MuRJD8rSVDimDA",
+                  data: {
+                  }
+                }
+              } 
+            }
+          )
+      }
+    }
+  };
+
+const stateToPropsAppMap = (state) => {
+   return {
+      menuCategories: state.menuCategories,
+      isInit: state.isInit
+   };
+};
+
+const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
   function (props) {
+    if (!props.isInit && typeof props.loadCategory === "function") {
+      props.loadCategory();
+    }
     return (
       <React.Fragment>
           <div style={headerContent}><header>
@@ -266,7 +268,7 @@ const App = connect(null, dispatchToPropsAppMap)(
 
           <div style={flexContainer}>
               <div style={sidebarMenu}><aside>
-                  <CategoryMenu cat={catsTree} onNavigate={onNavigating}/>
+                  <CategoryMenu cat={props.menuCategories} onNavigate={onNavigating}/>
               </aside></div>
               <div style={mainContent}>
                   <main>
@@ -282,17 +284,14 @@ const App = connect(null, dispatchToPropsAppMap)(
   }
 );
 
-const reducer = (state = 0, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
-
 const store = createStore(
     reducer,
     {
-    }
+      isInit: false
+    },
+    applyMiddleware(
+      axiosMiddleware(client)
+    )
 );
 
 
