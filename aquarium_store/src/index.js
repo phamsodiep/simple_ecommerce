@@ -274,10 +274,22 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
                   <main>
                       <h2>Trang web đang được xây dựng.</h2>
                   </main>
-                  <footer>
-                      <p>© cakiengphongthuy.blogspot.com</p>
-                  </footer>
               </div>
+          </div>
+          <div>
+              <footer>
+                  <p>&nbsp;</p>
+                  <p><center>
+                      Copyright © 2020 by Cá Kiểng Phong Thủy
+                      - All Rights Reserved.
+                  </center></p>
+                  <p><center>
+                      31 ĐX087, Phường Hiệp An,
+                      TP Thủ Dầu Một, Tỉnh Bình Dương -
+                      Điện thoại: (+84) 0778 081 441
+                  </center></p>
+                  <p>&nbsp;</p>
+              </footer>
           </div>
       </React.Fragment>
     );
