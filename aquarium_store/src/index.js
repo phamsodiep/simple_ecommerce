@@ -25,14 +25,38 @@ import {
 import { IS_LOCALHOST, PRODUCT_CATEGORIES} from './common/conf_debug.js';
 
 
+function getUrlId() {
+  let loc = window.location.toString();
+  for(let i = loc.length - 1; i >= 0; i--) {
+    if (loc.charAt(i) === '#') {
+      let idStr = loc.substring(i+1, loc.length);
+      let id = parseInt(idStr, 10);
+      if (isNaN(id)) {
+        id = 0;
+      }
+      return id;
+    }
+  }
+  return 0;
+}
 
 function CategoryMenu(props) {
+  //const { match, location, history } = props;
+  const { history } = props;
   const [target, setTarget] = React.useState("");
 
-  const onNavigate = typeof props.onNavigate === "function" ? props.onNavigate :
-    function(id) {
-      //alert(id);
-    };
+  const onNavigate = function(id) {
+    /* Product menu items */
+    if ((id > 10 && id < 100) || ([3, 4].includes(id))) {
+      //alert('Product');
+      history.push('/cat#' + id.toString())
+    }
+    /* Articles menu items */
+    if ((id > 1000) || ([100].includes(id))) {
+      //alert('Articles');
+      history.push('/art#' + id.toString())
+    }
+  };
 
   const headingStyle = {
     background: "#F3F3F3"
@@ -121,11 +145,6 @@ function CategoryMenu(props) {
         {items}
     </List>
   );
-}
-
-const onNavigating = (id) => {
-  // navigatable: 10 < x < 100 || x > 1000 || x in [no child list]
-  //alert('id = ' + id);
 }
 
 const flexContainer = {
@@ -266,11 +285,11 @@ const AboutMe = function(props) {
 }
 
 const Products = function(props) {
-  return <h2>San pham</h2>;
+  return <h2>San pham {getUrlId()}</h2>;
 }
 
 const Articles = function(props) {
-  return <h2>Bai Viet</h2>;
+  return <h2>Bai Viet {getUrlId()}</h2>;
 }
 
 const CategoryMenuWithRouter = withRouter(CategoryMenu);
@@ -290,7 +309,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
 
           <div style={flexContainer}>
               <div style={sidebarMenu}><aside>
-                  <CategoryMenuWithRouter cat={props.menuCategories} onNavigate={onNavigating}/>
+                  <CategoryMenuWithRouter cat={props.menuCategories} />
               </aside></div>
               <div style={mainContent}>
                   <main>
