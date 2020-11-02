@@ -22,7 +22,7 @@ import {
   withRouter
 } from 'react-router-dom';
 
-import { IS_LOCALHOST, PRODUCT_CATEGORIES} from './common/conf_debug.js';
+import { IS_LOCALHOST, MAIN_DATA } from './common/conf_debug.js';
 
 
 function getUrlId() {
@@ -189,7 +189,7 @@ const reducer = IS_LOCALHOST ?
           state,
           {
             isInit: true,
-            menuCategories: PRODUCT_CATEGORIES
+            menuCategories: MAIN_DATA.productCategories
           }
         );
       default:
@@ -215,7 +215,7 @@ const reducer = IS_LOCALHOST ?
           state,
           {
             isInit: true,
-            menuCategories: JSON.parse(action.payload.data.content)
+            menuCategories: (JSON.parse(action.payload.data.content)).productCategories
           }
         );
       default:
@@ -262,7 +262,7 @@ const dispatchToPropsAppMap = IS_LOCALHOST ?
               payload: {
                 request: {
                   method: "GET",
-                  url: "/8396047075318857173/posts/1041595060409029414/?key=AIzaSyDskPUFJo9WZqlU2wR09MuRJD8rSVDimDA",
+                  url: "/8396047075318857173/posts/9047017506441401269/?key=AIzaSyDskPUFJo9WZqlU2wR09MuRJD8rSVDimDA",
                   data: {
                   }
                 }
