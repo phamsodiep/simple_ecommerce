@@ -86,7 +86,8 @@ from PyQt5.QtSql import *
             self.productData.setModel(self.productsModel)
             self.productData.selectionModel().selectionChanged.connect(self.changeProductData)
             self.productData.setItemDelegateForColumn(0, ReadOnlyDelegate(self.productData))
-            for i in [1, 2] + list(range(7, 13)):
+            #for i in [1, 2] + list(range(7, 13)):
+            for i in [1, 2] + list(range(7, 12)):
                 self.productData.hideColumn(i)
 
             self.productsModel.setFilterKeyColumn(1)
@@ -96,11 +97,11 @@ from PyQt5.QtSql import *
             #self.productsModel.sort(0, QtCore.Qt.AscendingOrder)
             #self.productData.setItemDelegateForColumn(0, ReadOnlyDelegate(self.productData))
 
-            headers = {0: "Mã số", 3: "Tên", 4: "Giá 0", 5: "Giá 1", 6: "Liên kết ảnh"}
+            headers = {0: "Mã số", 3: "Tên", 4: "Giá 0", 5: "Giá 1", 6: "Liên kết ảnh", 12: "Liên kết ảnh tóm tắt"}
             for key in headers:
                 self.productsModel.setHeaderData(key, QtCore.Qt.Horizontal, headers[key])
 
-            sizes = {0: 60, 3: 120, 4: 60, 5: 60, 6: 240}
+            sizes = {0: 60, 3: 120, 4: 60, 5: 60, 6: 120, 12:120}
             for key in sizes:
                 self.productData.setColumnWidth(key, sizes[key])
 

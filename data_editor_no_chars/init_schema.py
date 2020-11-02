@@ -22,7 +22,8 @@ cursor.execute("""
         briefImgScale INTEGER,
         briefImgCroppedX INTEGER,
         briefImgCroppedY INTEGER,
-        desc TEXT
+        desc TEXT,
+        briefImgUrl TEXT
     )
 """)
 
