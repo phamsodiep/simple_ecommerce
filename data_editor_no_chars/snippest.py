@@ -105,7 +105,8 @@ from PyQt5.QtSql import *
             for key in sizes:
                 self.productData.setColumnWidth(key, sizes[key])
 
-        self.productsModel.setFilterRegExp(str(cat))
+        #self.productsModel.setFilterRegExp(str(cat))
+        self.productsModel.setFilterRegExp("^" + str(cat) + "$")
 
         if self.productsModel.rowCount() == 0:
             srcModel = self.productsModel.sourceModel() 
