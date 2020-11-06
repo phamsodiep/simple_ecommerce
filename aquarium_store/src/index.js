@@ -172,6 +172,7 @@ const headerContent = {
 
 const reducer = IS_LOCALHOST ?
   (state = 0, action) => {
+    let mainData = null;
     switch (action.type) {
       case "LOAD_CATS_FAIL":
         alert(JSON.stringify(action));
@@ -186,12 +187,15 @@ const reducer = IS_LOCALHOST ?
         //alert(JSON.stringify(action.payload.data));
         //for (let x in MAIN_DATA.products) alert(x);
         //alert(Object.keys(MAIN_DATA.products))
+        mainData = MAIN_DATA
         return Object.assign(
           {},
           state,
           {
             isInit: true,
-            menuCategories: MAIN_DATA.productCategories
+            menuCategories: mainData.productCategories,
+            products: mainData.products,
+            product: mainData.product
           }
         );
       default:
@@ -199,6 +203,7 @@ const reducer = IS_LOCALHOST ?
     }
   } :
   (state = 0, action) => {
+    let mainData = null;
     switch (action.type) {
       case "LOAD_CATS_FAIL":
         alert(JSON.stringify(action));
@@ -212,12 +217,15 @@ const reducer = IS_LOCALHOST ?
       case "LOAD_CATS_SUCCESS":
         //alert(JSON.stringify(action.payload.data));
         //alert(JSON.parse(action.payload.data.content));
+        mainData = (JSON.parse(action.payload.data.content));
         return Object.assign(
           {},
           state,
           {
             isInit: true,
-            menuCategories: (JSON.parse(action.payload.data.content)).productCategories
+            menuCategories: mainData.productCategories,
+            products: mainData.products,
+            product: mainData.product
           }
         );
       default:
