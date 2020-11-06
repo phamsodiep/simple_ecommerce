@@ -184,6 +184,8 @@ const reducer = IS_LOCALHOST ?
 
       case "LOAD_CATS_SUCCESS":
         //alert(JSON.stringify(action.payload.data));
+        //for (let x in MAIN_DATA.products) alert(x);
+        //alert(Object.keys(MAIN_DATA.products))
         return Object.assign(
           {},
           state,
@@ -280,17 +282,28 @@ const stateToPropsAppMap = (state) => {
    };
 };
 
+const dispatchToPropsProductsMap = null;
+
+const stateToPropsProductsMap = (state) => {
+   return {
+      menuCategories: state.menuCategories,
+      isInit: state.isInit
+   };
+};
+
 const AboutMe = function(props) {
   return <h2>Trang web đang được xây dựng.</h2>;
-}
-
-const Products = function(props) {
-  return <h2>San pham {getUrlId()}</h2>;
 }
 
 const Articles = function(props) {
   return <h2>Bai Viet {getUrlId()}</h2>;
 }
+
+const Category = connect(stateToPropsProductsMap, dispatchToPropsProductsMap)(
+  function(props) {
+    return <h2>San pham {getUrlId()}</h2>;
+  }
+);
 
 const CategoryMenuWithRouter = withRouter(CategoryMenu);
 
@@ -315,7 +328,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
                   <main>
                     <Switch>
                         <Route path="/art" component={Articles} />
-                        <Route path="/cat" component={Products} />
+                        <Route path="/cat" component={Category} />
                         <Route path="/" component={AboutMe} />
                     </Switch>
                   </main>
