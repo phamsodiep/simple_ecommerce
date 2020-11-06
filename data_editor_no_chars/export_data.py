@@ -211,7 +211,7 @@ for catId in catIds:
 catCounter = len(productMaps.keys())
 for catId in productMaps:
     catCounter -= 1
-    catSep = ", " if catCounter > 0 else ""
+    catSep = "," if catCounter > 0 else ""
     products = productMaps[catId]
     oFile.write("    \"" + str(catId) + "\": [")
     productCounter = len(products)
