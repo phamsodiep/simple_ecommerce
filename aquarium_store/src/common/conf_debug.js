@@ -182,8 +182,8 @@ export const MAIN_DATA = {
     },
     "2": {
       "name": "Cá chép koi",
-      "priceMin": 20,
-      "priceMax": 50,
+      "priceMin": 30,
+      "priceMax": 70,
       "imgUrl": "https://1.bp.blogspot.com/-RvLQKePt1gs/X6N4ukn1VpI/AAAAAAAAABA/TPamOOjKZtgJjhmnjapN5HfArCoTeMLkwCNcBGAsYHQ/s16000/CaKieng.jpg",
       "desc": "Cá \"chép\" koi",
       "briefImgUrl": "https://1.bp.blogspot.com/-YLQ9Ye1iNlM/X6OBp_iwMRI/AAAAAAAAABk/GukXkgUSFZk8ArZeVp-ZjURSdduPjGvDACNcBGAsYHQ/s16000/CaKieng.jpg"
@@ -206,16 +206,16 @@ export const MAIN_DATA = {
     },
     "7": {
       "name": "Cá ông tiên",
-      "priceMin": 10,
-      "priceMax": 30,
+      "priceMin": 20,
+      "priceMax": 20,
       "imgUrl": "https://1.bp.blogspot.com/-EEHwqticPPE/X6N_fo25iXI/AAAAAAAAABU/Qxqb4Pm7_fcYZ2mZJTwkbFbekxw7G5WnwCNcBGAsYHQ/s16000/CaOngTien.jpg",
       "desc": "Cá ông tiên đẹp ăn trùng chỉ,  điệu kiện nước đòi hỏi pH, nhiệt độ thích hợp. Đòi hỏi chăm sóc kỹ lưỡng.",
       "briefImgUrl": "https://1.bp.blogspot.com/-wxwlP3G9-Hk/X6OCB1MIvWI/AAAAAAAAAB0/XmZPHAoXgccBJNIThKNCkqAUtOPHt2JgQCNcBGAsYHQ/s16000/CaOngTien.jpg"
     },
     "8": {
       "name": "Cá La Hán",
-      "priceMin": 20,
-      "priceMax": 40,
+      "priceMin": 50,
+      "priceMax": 120,
       "imgUrl": "https://1.bp.blogspot.com/-LcHPXV6u9A8/X6UOdgzkc1I/AAAAAAAAACY/mVXG9rHy4ecbFEvop2TyV0Npx2vxr9NtwCNcBGAsYHQ/s16000/lahan.jpg",
       "desc": "Cá La Hán ăn trùng chỉ dễ nuôi, đòi hỏi thay nước thường xuyên để tránh bệnh nấm mốc gây ra cho cá.",
       "briefImgUrl": "https://1.bp.blogspot.com/-FIiAhqIt_vI/X6UTfZy_gUI/AAAAAAAAAC4/eoUYBW8EU-EsM4itPi2UcP1_PCyTwywWACNcBGAsYHQ/s16000/lahan.jpg"

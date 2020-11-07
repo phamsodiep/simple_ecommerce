@@ -286,16 +286,19 @@ const dispatchToPropsAppMap = IS_LOCALHOST ?
 const stateToPropsAppMap = (state) => {
    return {
       menuCategories: state.menuCategories,
+      products: state.products,
+      product: state.product,
       isInit: state.isInit
    };
 };
 
-const dispatchToPropsProductsMap = null;
+const dispatchToPropsCategoryMap = null;
 
-const stateToPropsProductsMap = (state) => {
+const stateToPropsCategoryMap = (state) => {
    return {
       menuCategories: state.menuCategories,
-      isInit: state.isInit
+      products: state.products,
+      product: state.product
    };
 };
 
@@ -307,9 +310,84 @@ const Articles = function(props) {
   return <h2>Bai Viet {getUrlId()}</h2>;
 }
 
-const Category = connect(stateToPropsProductsMap, dispatchToPropsProductsMap)(
+function currencyFormat(number) {
+  let curr = number.toLocaleString('vn-VN', { style: 'currency', currency: 'VND' });
+  return curr.substring(1, curr.length);
+}
+
+const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
   function(props) {
-    return <h2>San pham {getUrlId()}</h2>;
+    const urlId = getUrlId();
+    const cardItem = {
+      padding: "1em 1em 1em 1em",
+      textAlign: "center",
+      width: "257px"
+    }
+    const cardsContainer = {
+      padding: "1em 0em 1em 0em",
+      display: "flex",
+      flexWrap: "wrap"
+    };
+
+    let retrievePathName = function(id) {
+      let menuCats = props.menuCategories;
+      for(let i = 0; i < menuCats.length; i++) {
+        let menuCat = menuCats[i];
+        if (menuCat.id === id) {
+          return menuCat.name;
+        }
+        let subMenus = menuCat.children;
+        if (subMenus !== undefined) {
+          for(let j = 0; j < subMenus.length; j++) {
+            let subMenu = subMenus[j];
+            if (subMenu.id === id) {
+              return menuCat.name + " / " + subMenu.name;
+            }
+          }
+        }
+      }
+      return "";
+    };
+
+    let productsElements = [];
+    let products = props.products[urlId];
+    if (!Array.isArray(products)) {
+      return <h2>{retrievePathName(urlId)}:</h2>;
+    }
+
+    for(let i = 0; i < products.length; i++) {
+      let proId = products[i];
+      let product = props.product[proId];
+      if (product !== undefined) {
+        let price = "Liên hệ";
+        let priceMin = product.priceMin * 1000;
+        let priceMax = product.priceMax * 1000;
+        if (priceMin !== 0 && priceMax !== 0) {
+          price = currencyFormat(priceMin);
+          if (priceMax > priceMin) {
+            price = price + " - " + currencyFormat(priceMax);
+          }
+          price = price + " VND";
+        }
+        product.priceMin.toString();
+        productsElements[productsElements.length] = (
+          <div style={cardItem}>
+            <div><img src={product.briefImgUrl} /></div>
+            <div><b>{product.name}</b></div>
+            <div>{price}</div>
+          </div>
+        );
+      }
+    }
+
+    return (
+      <React.Fragment>
+          <h2>{retrievePathName(urlId)}:</h2>
+          <div style={cardsContainer}>
+            {productsElements}
+          </div>
+      </React.Fragment>
+    );
   }
 );
 
@@ -319,6 +397,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
   function (props) {
     if (!props.isInit && typeof props.loadCategory === "function") {
       props.loadCategory();
+      return null;
     }
     return (
       <Router>
