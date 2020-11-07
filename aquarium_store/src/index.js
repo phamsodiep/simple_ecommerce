@@ -18,7 +18,7 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  //Link,
+  Link,
   withRouter
 } from 'react-router-dom';
 
@@ -302,8 +302,15 @@ const stateToPropsCategoryMap = (state) => {
    };
 };
 
+const dispatchToPropsProductMap = null;
+const stateToPropsProductMap = (state) => {
+   return {
+      product: state.product
+   };
+};
+
 const AboutMe = function(props) {
-  return <h2>Trang web đang được xây dựng.</h2>;
+  return <h2>Blog đang được xây dựng.</h2>;
 }
 
 const Articles = function(props) {
@@ -312,8 +319,43 @@ const Articles = function(props) {
 
 function currencyFormat(number) {
   let curr = number.toLocaleString('vn-VN', { style: 'currency', currency: 'VND' });
-  return curr.substring(1, curr.length);
+  return curr.replace("₫", "");
 }
+
+function getPriceString(min, max) {
+  let price = "Liên hệ";
+  let priceMin = min * 1000;
+  let priceMax = max * 1000;
+  if (priceMin !== 0 && priceMax !== 0) {
+    price = currencyFormat(priceMin);
+    if (priceMax > priceMin) {
+      price = price + " - " + currencyFormat(priceMax);
+    }
+    price = price + " VND";
+  }
+  return price;
+}
+
+
+const Product = connect(stateToPropsProductMap, dispatchToPropsProductMap)(
+  function (props) {
+    const urlId = getUrlId();
+    const prod = props.product[urlId];
+    const imgDivStyle = {
+      width: "98%",
+    };
+    //<div>Giá: {getPriceString(prod.priceMin, prod.priceMax)}</div>
+    return (
+      <React.Fragment>
+          <h2>{prod.name}</h2>
+          <h2>&nbsp;</h2>
+          <p>{prod.desc}</p>
+          <h2>&nbsp;</h2>
+          <div><img src={prod.imgUrl} style={imgDivStyle}/></div>
+      </React.Fragment>
+    );
+  }
+);
 
 const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
   function(props) {
@@ -359,22 +401,13 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
       let proId = products[i];
       let product = props.product[proId];
       if (product !== undefined) {
-        let price = "Liên hệ";
-        let priceMin = product.priceMin * 1000;
-        let priceMax = product.priceMax * 1000;
-        if (priceMin !== 0 && priceMax !== 0) {
-          price = currencyFormat(priceMin);
-          if (priceMax > priceMin) {
-            price = price + " - " + currencyFormat(priceMax);
-          }
-          price = price + " VND";
-        }
-        product.priceMin.toString();
+        let linkUrl = "/prod#" + proId;
+        let price = getPriceString(product.priceMin, product.priceMax);
+        //<div>{price}</div>
         productsElements[productsElements.length] = (
           <div style={cardItem}>
             <div><img src={product.briefImgUrl} /></div>
-            <div><b>{product.name}</b></div>
-            <div>{price}</div>
+            <div><Link to={linkUrl}><b>{product.name}</b></Link></div>
           </div>
         );
       }
@@ -416,6 +449,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
                     <Switch>
                         <Route path="/art" component={Articles} />
                         <Route path="/cat" component={Category} />
+                        <Route path="/prod" component={Product} />
                         <Route path="/" component={AboutMe} />
                     </Switch>
                   </main>

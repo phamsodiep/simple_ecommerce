@@ -166,34 +166,17 @@ export const MAIN_DATA = {
   ],
 
   "products": {
-    "11": [1, 2],
     "13": [3, 4],
-    "14": [7, 8, 9]
+    "14": [8, 9]
   },
 
   "product": {
-    "1": {
-      "name": "Cá chép thường",
-      "priceMin": 0,
-      "priceMax": 0,
-      "imgUrl": "https://1.bp.blogspot.com/-RvLQKePt1gs/X6N4ukn1VpI/AAAAAAAAABA/TPamOOjKZtgJjhmnjapN5HfArCoTeMLkwCNcBGAsYHQ/s16000/CaKieng.jpg",
-      "desc": "Cá chép \"thường\"",
-      "briefImgUrl": "https://1.bp.blogspot.com/-YLQ9Ye1iNlM/X6OBp_iwMRI/AAAAAAAAABk/GukXkgUSFZk8ArZeVp-ZjURSdduPjGvDACNcBGAsYHQ/s16000/CaKieng.jpg"
-    },
-    "2": {
-      "name": "Cá chép koi",
-      "priceMin": 30,
-      "priceMax": 70,
-      "imgUrl": "https://1.bp.blogspot.com/-RvLQKePt1gs/X6N4ukn1VpI/AAAAAAAAABA/TPamOOjKZtgJjhmnjapN5HfArCoTeMLkwCNcBGAsYHQ/s16000/CaKieng.jpg",
-      "desc": "Cá \"chép\" koi",
-      "briefImgUrl": "https://1.bp.blogspot.com/-YLQ9Ye1iNlM/X6OBp_iwMRI/AAAAAAAAABk/GukXkgUSFZk8ArZeVp-ZjURSdduPjGvDACNcBGAsYHQ/s16000/CaKieng.jpg"
-    },
     "3": {
       "name": "Ngân long",
       "priceMin": 700,
       "priceMax": 1200,
       "imgUrl": "https://1.bp.blogspot.com/-Ave4gT3_KoI/X6UOWP0o2JI/AAAAAAAAACQ/6jY02uG8POEpr354--EkSaoKh7d-lzHTgCNcBGAsYHQ/s16000/nganlong.jpg",
-      "desc": "Ngân long",
+      "desc": "",
       "briefImgUrl": "https://1.bp.blogspot.com/-47ARAjPsaTY/X6USxyVJXSI/AAAAAAAAACs/S18sDAgueWcftz73P5qkRdsUCPFxrlpHgCNcBGAsYHQ/s16000/nganlong.jpg"
     },
     "4": {
@@ -201,16 +184,8 @@ export const MAIN_DATA = {
       "priceMin": 1000,
       "priceMax": 2000,
       "imgUrl": "https://1.bp.blogspot.com/-Qq4GCAcjDww/X6UON5Zu4_I/AAAAAAAAACI/Rf0q__YxLhkUlmMKCEohoOxP-PSwZGreQCNcBGAsYHQ/s16000/kimlong.jpg",
-      "desc": "Kim long",
+      "desc": "",
       "briefImgUrl": "https://1.bp.blogspot.com/-lxxakkgQDBM/X6USosKhKcI/AAAAAAAAACo/GgBtsmJJetki8Yx-JhPCv9QaWpKSekR6wCNcBGAsYHQ/s16000/kimlong.jpg"
-    },
-    "7": {
-      "name": "Cá ông tiên",
-      "priceMin": 20,
-      "priceMax": 20,
-      "imgUrl": "https://1.bp.blogspot.com/-EEHwqticPPE/X6N_fo25iXI/AAAAAAAAABU/Qxqb4Pm7_fcYZ2mZJTwkbFbekxw7G5WnwCNcBGAsYHQ/s16000/CaOngTien.jpg",
-      "desc": "Cá ông tiên đẹp ăn trùng chỉ,  điệu kiện nước đòi hỏi pH, nhiệt độ thích hợp. Đòi hỏi chăm sóc kỹ lưỡng.",
-      "briefImgUrl": "https://1.bp.blogspot.com/-wxwlP3G9-Hk/X6OCB1MIvWI/AAAAAAAAAB0/XmZPHAoXgccBJNIThKNCkqAUtOPHt2JgQCNcBGAsYHQ/s16000/CaOngTien.jpg"
     },
     "8": {
       "name": "Cá La Hán",
