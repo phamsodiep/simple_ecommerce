@@ -22,7 +22,7 @@ import {
   withRouter
 } from 'react-router-dom';
 
-import { IS_LOCALHOST, MAIN_DATA } from './common/conf_debug.js';
+import { IS_LOCALHOST, MAIN_DATA } from './common/conf.js';//_debug
 
 
 function getUrlId() {
@@ -309,8 +309,10 @@ const stateToPropsProductMap = (state) => {
    };
 };
 
-const AboutMe = function(props) {
-  return <h2>Blog đang được xây dựng.</h2>;
+const HomePage = function(props) {
+  const { history } = props;
+  history.push("/cat#14");
+  return null;
 }
 
 const Articles = function(props) {
@@ -425,6 +427,7 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
 );
 
 const CategoryMenuWithRouter = withRouter(CategoryMenu);
+const HomePageWithRouter = withRouter(HomePage);
 
 const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
   function (props) {
@@ -450,7 +453,7 @@ const App = connect(stateToPropsAppMap, dispatchToPropsAppMap)(
                         <Route path="/art" component={Articles} />
                         <Route path="/cat" component={Category} />
                         <Route path="/prod" component={Product} />
-                        <Route path="/" component={AboutMe} />
+                        <Route path="/" component={HomePageWithRouter} />
                     </Switch>
                   </main>
               </div>
