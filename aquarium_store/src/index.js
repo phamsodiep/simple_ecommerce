@@ -309,15 +309,49 @@ const stateToPropsProductMap = (state) => {
    };
 };
 
+const dispatchToPropsArticlesMap = null;
+const stateToPropsArticlesMap = (state) => {
+   return {
+      menuCategories: state.menuCategories,
+      products: state.products,
+      product: state.product
+   };
+};
+
+
 const HomePage = function(props) {
   const { history } = props;
   history.push("/cat#14");
   return null;
 }
 
-const Articles = function(props) {
-  return <h2>Bai Viet {getUrlId()}</h2>;
-}
+
+function retrievePathName(menuCats, id) {
+  for(let i = 0; i < menuCats.length; i++) {
+    let menuCat = menuCats[i];
+    if (menuCat.id === id) {
+      return menuCat.name;
+    }
+    let subMenus = menuCat.children;
+    if (subMenus !== undefined) {
+      for(let j = 0; j < subMenus.length; j++) {
+        let subMenu = subMenus[j];
+        if (subMenu.id === id) {
+          return menuCat.name + " / " + subMenu.name;
+        }
+      }
+    }
+  }
+  return "";
+};
+
+
+const Articles = connect(stateToPropsArticlesMap, dispatchToPropsArticlesMap)(
+  function(props) {
+    const urlId = getUrlId();
+    return <h2>{retrievePathName(props.menuCategories, urlId)}:</h2>;
+  }
+);
 
 function currencyFormat(number) {
   let curr = number.toLocaleString('vn-VN', { style: 'currency', currency: 'VND' });
@@ -376,31 +410,10 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
       display: "flex",
       flexWrap: "wrap"
     };
-
-    let retrievePathName = function(id) {
-      let menuCats = props.menuCategories;
-      for(let i = 0; i < menuCats.length; i++) {
-        let menuCat = menuCats[i];
-        if (menuCat.id === id) {
-          return menuCat.name;
-        }
-        let subMenus = menuCat.children;
-        if (subMenus !== undefined) {
-          for(let j = 0; j < subMenus.length; j++) {
-            let subMenu = subMenus[j];
-            if (subMenu.id === id) {
-              return menuCat.name + " / " + subMenu.name;
-            }
-          }
-        }
-      }
-      return "";
-    };
-
     let productsElements = [];
     let products = props.products[urlId];
     if (!Array.isArray(products)) {
-      return <h2>{retrievePathName(urlId)}:</h2>;
+      return <h2>{retrievePathName(props.menuCategories, urlId)}:</h2>;
     }
 
     for(let i = 0; i < products.length; i++) {
@@ -421,7 +434,7 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
 
     return (
       <React.Fragment>
-          <h2>{retrievePathName(urlId)}:</h2>
+          <h2>{retrievePathName(props.menuCategories, urlId)}:</h2>;
           <div style={cardsContainer}>
             {productsElements}
           </div>
