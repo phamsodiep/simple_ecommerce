@@ -348,7 +348,8 @@ const Product = connect(stateToPropsProductMap, dispatchToPropsProductMap)(
     };
     //<div>Giá: {getPriceString(prod.priceMin, prod.priceMax)}</div>    
     let onDivCreate = (elem) => {
-      elem.innerHTML = prod.desc;
+      if (elem !== null)
+        elem.innerHTML = prod.desc;
     }
     return (
       <React.Fragment>
