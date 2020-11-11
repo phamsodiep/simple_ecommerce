@@ -22,23 +22,9 @@ import {
   withRouter
 } from 'react-router-dom';
 
+import { getUrlId, retrievePathName } from './common/utils.js';
 import { IS_LOCALHOST, MAIN_DATA } from './common/conf_debug.js';
 
-
-function getUrlId() {
-  let loc = window.location.toString();
-  for(let i = loc.length - 1; i >= 0; i--) {
-    if (loc.charAt(i) === '#') {
-      let idStr = loc.substring(i+1, loc.length);
-      let id = parseInt(idStr, 10);
-      if (isNaN(id)) {
-        id = 0;
-      }
-      return id;
-    }
-  }
-  return 0;
-}
 
 function CategoryMenu(props) {
   //const { match, location, history } = props;
@@ -326,26 +312,6 @@ const HomePage = function(props) {
 }
 
 
-function retrievePathName(menuCats, id) {
-  for(let i = 0; i < menuCats.length; i++) {
-    let menuCat = menuCats[i];
-    if (menuCat.id === id) {
-      return menuCat.name;
-    }
-    let subMenus = menuCat.children;
-    if (subMenus !== undefined) {
-      for(let j = 0; j < subMenus.length; j++) {
-        let subMenu = subMenus[j];
-        if (subMenu.id === id) {
-          return menuCat.name + " / " + subMenu.name;
-        }
-      }
-    }
-  }
-  return "";
-};
-
-
 const Articles = connect(stateToPropsArticlesMap, dispatchToPropsArticlesMap)(
   function(props) {
     const urlId = getUrlId();
@@ -353,24 +319,6 @@ const Articles = connect(stateToPropsArticlesMap, dispatchToPropsArticlesMap)(
   }
 );
 
-function currencyFormat(number) {
-  let curr = number.toLocaleString('vn-VN', { style: 'currency', currency: 'VND' });
-  return curr.replace("₫", "");
-}
-
-function getPriceString(min, max) {
-  let price = "Liên hệ";
-  let priceMin = min * 1000;
-  let priceMax = max * 1000;
-  if (priceMin !== 0 && priceMax !== 0) {
-    price = currencyFormat(priceMin);
-    if (priceMax > priceMin) {
-      price = price + " - " + currencyFormat(priceMax);
-    }
-    price = price + " VND";
-  }
-  return price;
-}
 
 
 const Product = connect(stateToPropsProductMap, dispatchToPropsProductMap)(
@@ -421,7 +369,7 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
       let product = props.product[proId];
       if (product !== undefined) {
         let linkUrl = "/prod#" + proId;
-        let price = getPriceString(product.priceMin, product.priceMax);
+        //let price = getPriceString(product.priceMin, product.priceMax);
         //<div>{price}</div>
         productsElements[productsElements.length] = (
           <div style={cardItem}>
