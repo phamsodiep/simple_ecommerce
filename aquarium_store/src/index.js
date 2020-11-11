@@ -22,7 +22,7 @@ import {
   withRouter
 } from 'react-router-dom';
 
-import { IS_LOCALHOST, MAIN_DATA } from './common/conf.js';//_debug
+import { IS_LOCALHOST, MAIN_DATA } from './common/conf_debug.js';
 
 
 function getUrlId() {
@@ -346,12 +346,15 @@ const Product = connect(stateToPropsProductMap, dispatchToPropsProductMap)(
     const imgDivStyle = {
       width: "98%",
     };
-    //<div>Giá: {getPriceString(prod.priceMin, prod.priceMax)}</div>
+    //<div>Giá: {getPriceString(prod.priceMin, prod.priceMax)}</div>    
+    let onDivCreate = (elem) => {
+      elem.innerHTML = prod.desc;
+    }
     return (
       <React.Fragment>
           <h2>{prod.name}</h2>
           <h2>&nbsp;</h2>
-          <p>{prod.desc}</p>
+          <div ref={onDivCreate}></div>
           <h2>&nbsp;</h2>
           <div><img src={prod.imgUrl} style={imgDivStyle}/></div>
       </React.Fragment>
