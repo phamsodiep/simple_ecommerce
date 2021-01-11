@@ -23,7 +23,7 @@ import {
 } from 'react-router-dom';
 
 import { getUrlId, retrievePathName } from './common/utils.js';
-import { IS_LOCALHOST, MAIN_DATA } from './common/conf_debug.js';
+import { IS_LOCALHOST, MAIN_DATA } from './common/conf.js';
 
 
 function CategoryMenu(props) {
@@ -382,7 +382,7 @@ const Category = connect(stateToPropsCategoryMap, dispatchToPropsCategoryMap)(
 
     return (
       <React.Fragment>
-          <h2>{retrievePathName(props.menuCategories, urlId)}:</h2>;
+          <h2>{retrievePathName(props.menuCategories, urlId)}:</h2>
           <div style={cardsContainer}>
             {productsElements}
           </div>
