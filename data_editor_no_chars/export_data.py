@@ -30,7 +30,7 @@ DATA = """{
         },
         {
           "id": 12,
-          "name": "Cá dĩa",
+          "name": "Cá Betta",
           "children": [
           ]
         },
